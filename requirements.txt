@@ -1,0 +1,27 @@
+flask
+flask_cors
+PrettyTable
+npm
+
+
+useEffect(() => {
+        fetch('/api/tasks', { credentials: 'include'}).then(res => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+        })
+        .then(setTasks)
+        .catch(err => {
+            console.error("failed to fetch tasks:", err);
+            setTasks([]);
+        });
+
+        fetch('/api/habits', { credentials: 'include'}).then(res => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+        })
+        .then(setHabits)
+        .catch(err => {
+            console.error("failed to fetch habits:", err);
+            setHabits([]);
+        });
+    }, []);
