@@ -13,36 +13,34 @@ export default function ManagePage() {
     const fetchData = () => {
         setIsLoading(true);
 
-        fetchData('/api/check-session', {
+        fetch('/api/session', {
             credentials: 'include'
         })
         .then(res => {
-            if (!res.ok) throw new Error("Network response was not ok");
+            if (!res.ok) { 
+                return res.json().then(data => Promise.reject(data));
+            }
             return res.json();
         })
         .then(data => {
-            setIsAuthenticated(data.authenticated);
+            console.log("User is logged In", data)
+            setIsAuthenticated(true);
+        
 
-            if (data.authenticated) {
-
-                return Promise.all([
-                    fetch('/api/tasks', { credentials: 'include' })
-                        .then(res => {
-                            if (!res.ok) throw new Error ('Error rendering tasks');
-                            return res.json();
-                        }),
-
-                    fetch('/api/habits', {
-                        credentials: 'include'
-                    }).then(res => {
-                        if (!res.ok) throw new Error ('Error rendering habits');
+            return Promise.all([
+                fetch('/api/tasks', { credentials: 'include' })
+                    .then(res => {
+                        if (!res.ok) throw new Error ('Error rendering tasks');
                         return res.json();
-                    })
-                    
-                ]);
-            } else {
-                throw new Error ('Not Authenticated!');
-            }
+                    }),
+
+                fetch('/api/habits', {
+                    credentials: 'include'
+                }).then(res => {
+                    if (!res.ok) throw new Error ('Error rendering habits');
+                    return res.json();
+                })  
+            ]);
         })
         .then(([tasksData, habitsData]) => {
             setTasks(tasksData);
@@ -52,13 +50,14 @@ export default function ManagePage() {
         .catch(err => {
             console.error("Error fetching data", err);
             setError(err.message);
+            setIsAuthenticated(false)
+            setError("User not authenticated")
             setIsLoading(false);
         });
     };
 
     useEffect(() => {
         fetchData();
-
     }, []);
 
     const deleteItem = (type, name) => {
@@ -163,6 +162,6 @@ export default function ManagePage() {
             </section>
             </div>
         </div>
-    
+
     );
-}
+    }

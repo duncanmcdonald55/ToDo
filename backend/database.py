@@ -24,7 +24,7 @@ def view(name):
     if name in allowed_tables:
         try:
             ##GRAB DESIRED DATA
-            c.execute(f'SELECT * FROM {name}')
+            c.execute(f"SELECT * FROM {name};")
             data = c.fetchall()
 
             ##INITIALIZE PRETTY TABLE
@@ -88,13 +88,5 @@ def insert_habit():
     except EOFError:
         print("error") 
 
-def get_db():
-    conn = sqlite3.connect("myhabit.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
 if __name__ == '__main__':
-    
-    insert_task()
-    insert_habit()
-    view("Habits")
+    view("Users")

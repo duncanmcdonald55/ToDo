@@ -33,7 +33,7 @@ export default function RegisterPage() {
             return;
         }
         try {
-            const response = fetch('/api/register', {
+            const response = await fetch('/api/register', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function RegisterPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error (data.Error || "Could not register ");
+                throw new Error (data.error || "Could not register ");
             }
             navigate('/login')
 
@@ -62,7 +62,7 @@ export default function RegisterPage() {
         <div className = "flex min-h-screen items-center justify-center">
             <div className = "w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
                 <div className = "text-center">
-                    <h1 className = "text-2xl font-bold">Login to MyHabit</h1>
+                    <h1 className = "text-2xl font-bold">Register to MyHabit</h1>
                     <p className = "mt-2 text-gray-600">Track your habits and tasks</p>
                 </div>
 
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                             name='email'
                             id = 'email'
                             placeholder='email'
-                            type = 'text'
+                            type = 'email'
                             required
                             value = {formData.email}
                             onChange = {handleChange}
@@ -106,15 +106,16 @@ export default function RegisterPage() {
                     </div>
 
                     <div>
-                        <label htmlFor = "password" className = 'blocl text-sm font-medium text-gray-700'>
+                        <label htmlFor = "password" className = 'block text-sm font-medium text-gray-700'>
                             Password
                         </label>
                         <input
                             name = 'password'
                             id = 'password'
                             placeholder = 'password'
-                            type = 'text'
+                            type = 'password'
                             required
+                            autoComplete = 'off'
                             value = {formData.password}
                             onChange = {handleChange}
                             className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
@@ -130,8 +131,9 @@ export default function RegisterPage() {
                             name = 'confirmation'
                             id = 'confirmation'
                             placeholder = 'Confirmation'
-                            type = 'text'
+                            type = 'password'
                             required
+                            autoComplete='off'
                             value = {formData.confirmation}
                             onChange = {handleChange}
                             className = 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'

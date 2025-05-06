@@ -1,12 +1,27 @@
-from flask import Flask, jsonify, request, session, redirect  #type: ignore
+from flask import Flask, jsonify, request, session, redirect, g  #type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash #type: ignore
 from flask_cors import CORS #type: ignore
 import sqlite3
-from database import get_db, insert_user
+from database import insert_user
 
 app = Flask(__name__)
-app.secret_key = 'Asdcso&8373ndo.>,9eu03'
+app.secret_key = 'dev'
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"], expose_headers=["Content-Type", "Authorization"])
+
+
+# Helper Functions
+
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect("myhabit.db")
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+@app.teardown_appcontext
+def close_db(exception):
+    db = g.pop('db',None)
+    if db:
+        db.close()
 
 
 @app.route('/api/login', methods = ['POST'])
@@ -19,7 +34,7 @@ def login():
         c = conn.cursor()
         c.execute("SELECT * FROM Users WHERE firstname = ?;",(data["firstname"],))
         user = c.fetchone()
-        if not user or not check_password_hash(data["hash"], data["password"]):
+        if not user or not check_password_hash(user["hash"], data["password"]):
             return jsonify({"error": "Invalid Credentials"}), 401
         session["userid"] = user["userid"]
         return jsonify({"Message": "Logged In"})
@@ -36,7 +51,7 @@ def register():
             return jsonify({"error": "Passwords must match"}), 401
         conn = get_db()
         c = conn.cursor()
-        c.execute("SELECT FROM Users WHERE firstname = ?;",(data["firstname"],))
+        c.execute("SELECT * FROM Users WHERE firstname = ?;",(data["firstname"],))
         existing = c.fetchone()
         if existing:
             return jsonify({"error": "User already exists"}), 500
@@ -114,7 +129,7 @@ def get_habit():
                 return jsonify({"error": "No data provided"}), 401
             c.execute("INSERT INTO Habits(habitname, hfrequency, hduration, userid) VALUES (?,?,?,?);",(data.get("habitname"), data.get("hfrequency", None), data.get("hduration", None), userid))
             conn.commit()
-            c.execute("SELECT * FROM Habit WHERE habitid = last_inserted_rowid();")
+            c.execute("SELECT * FROM Habits WHERE habitid = last_insert_rowid();")
             new_habit = c.fetchone()
             return jsonify(dict(new_habit)), 201
         
@@ -137,7 +152,7 @@ def delete_habit(habitname):
         conn.commit()
         return jsonify({"Message": "Successfully Deleted"}), 204
     except Exception as e:
-        return jsonify({"error", str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/session", methods=["GET"])
 def check_session():

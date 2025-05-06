@@ -8,8 +8,10 @@ export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path = "/" element = {<Navigate to ="/manage" />} />
+                <Route path = "/" element = {<Navigate to ="/login" />} />
                 <Route path = "/manage" element = {<ManagePage />} />
+                <Route path = "/login" element = {<LoginPage />} />
+                <Route path = "register" element = {<RegisterPage />} />
             </Routes>
         </Router>
     );
