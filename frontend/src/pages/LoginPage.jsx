@@ -2,20 +2,20 @@ import {useState, useEffect} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 
 
-// function checkValidation() {
-//     const navigate = useNavigate();
-//     useEffect(() => {
-//         fetch('/api/session', {
-//             'credentials': 'include'
-//         }).then(res => res.json())
-//         .then(data => {
-//             if (!data.error) {
-//                 navigate('/manage');
-//             }
-//         })
-//         .catch(err => console.error("Session check error:", err));
-//     }, [navigate]);
-// }
+function checkValidation() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        fetch('/api/session', {
+            'credentials': 'include'
+        }).then(res => res.json())
+        .then(data => {
+            if (!data.error) {
+                navigate('/manage');
+            }
+        })
+        .catch(err => console.error("Session check error:", err));
+    }, [navigate]);
+}
 
 
 export default function LoginPage() {
