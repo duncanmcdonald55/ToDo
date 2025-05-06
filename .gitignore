@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 .vite/
-__pycache__/
+backend/__pycache__/
 public/
 
 # Build output
@@ -16,7 +16,7 @@ esint.config.js
 .env.local
 
 # Python virtual environment
-../venv/
+venv/
 
 # Logs
 frontend/npm-debug.log*
