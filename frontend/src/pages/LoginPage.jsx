@@ -1,5 +1,22 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
+
+
+// function checkValidation() {
+//     const navigate = useNavigate();
+//     useEffect(() => {
+//         fetch('/api/session', {
+//             'credentials': 'include'
+//         }).then(res => res.json())
+//         .then(data => {
+//             if (!data.error) {
+//                 navigate('/manage');
+//             }
+//         })
+//         .catch(err => console.error("Session check error:", err));
+//     }, [navigate]);
+// }
+
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
@@ -38,7 +55,7 @@ export default function LoginPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error (data.Error || "Login failed");
+                throw new Error (data.error || "Login failed");
             }
 
             navigate('/manage');

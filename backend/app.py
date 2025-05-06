@@ -6,6 +6,12 @@ from database import insert_user
 
 app = Flask(__name__)
 app.secret_key = 'dev'
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"], expose_headers=["Content-Type", "Authorization"])
 
 
@@ -41,23 +47,40 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/register', methods=['POST'])
+@app.route('/api/register', methods=["POST"])
 def register():
     try:
         data = request.json
         if not data:
-            return jsonify({"error": "Could not register"}), 401
+            return jsonify({"error": "No data provided"}), 400
+        
+        required_fields = ["firstname", "email", "password", "confirmation"]
+
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({"error": "Missing required fields {field}"}), 400
+            
         if data["password"] != data["confirmation"]:
             return jsonify({"error": "Passwords must match"}), 401
+        
         conn = get_db()
         c = conn.cursor()
+
         c.execute("SELECT * FROM Users WHERE firstname = ?;",(data["firstname"],))
-        existing = c.fetchone()
-        if existing:
+        existing_user = c.fetchone()
+        if existing_user:
             return jsonify({"error": "User already exists"}), 500
+        
+        c.execute("SElECT * FROM Users WHERE email = ?;",(data["email"],))
+        existing_email = c.fetchone()
+
+        if existing_email:
+            return jsonify({"error": "Email already exists"}), 500
+        
         hash = generate_password_hash(data["password"])
         insert_user(data["firstname"], hash, data["email"])
-        return jsonify({"Message": "User Registered"})
+            
+        return jsonify({"Message": "User Registered"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

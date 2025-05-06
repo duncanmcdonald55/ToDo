@@ -14,7 +14,7 @@ export default function TaskForm({onTaskAdded}) {
     };
 
     const handleSubmit = async (e) => {
-        e.preventdefault();
+        e.preventDefault();
         setIsSubmitting(true);
         setIsError("");
 
@@ -39,6 +39,7 @@ export default function TaskForm({onTaskAdded}) {
                 onTaskAdded();
             }
         } catch (err) {
+            console.error('Form submission error:',err);
             setIsError(err.message);
         } finally {
             setIsSubmitting(false);

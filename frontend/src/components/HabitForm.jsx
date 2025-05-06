@@ -14,7 +14,7 @@ export default function HabitForm({onHabitAdded}) {
 
     };
     const handleSubmit = async (e) => {
-        e.preventdefault();
+        e.preventDefault();
         setIsSubmitting(true);
         setIsError("");
 
@@ -39,6 +39,7 @@ export default function HabitForm({onHabitAdded}) {
                 onHabitAdded();
             } 
         } catch (err) {
+            console.error('Form submission error:',err);
             setIsError(err.message);
         } finally {
             setIsSubmitting(false);

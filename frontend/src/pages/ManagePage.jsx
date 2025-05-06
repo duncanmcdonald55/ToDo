@@ -150,7 +150,7 @@ export default function ManagePage() {
                                     </div>
                                 </div>
                                 <button 
-                                    onClick = {() => deleteItem('habits', habit.habit_name)}
+                                    onClick = {() => deleteItem('habits', habit.habitname)}
                                     className = "bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
                                         Delete Habit
                                 </button>
